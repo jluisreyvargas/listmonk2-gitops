@@ -7,6 +7,6 @@ resources:
 
 # Cambia estos valores para apuntar a tu GHCR
 images:
-  - name: ghcr.io/REPLACE_ME/listmonk2
-    newName: ghcr.io/TU_ORG/listmonk2
-    newTag: sha-REPLACE_ME
+  - name: ghcr.io/jluisreyvargas/listmonk2-app
+    newName: ghcr.io/jluisreyvargas/listmonk2-app
+    newTag: sha-fed5816e907e24bc55003084075d2ab6eda6caea
