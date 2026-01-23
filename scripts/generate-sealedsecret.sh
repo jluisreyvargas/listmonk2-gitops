@@ -22,6 +22,10 @@ kubectl -n "$NAMESPACE" create secret generic "$NAME" \
   --from-literal=admin_user="$ADMIN_USER" \
   --from-literal=admin_password="$ADMIN_PASSWORD" \
   --dry-run=client -o yaml \
-| kubeseal --format yaml > "$OUT"
+| kubeseal \
+    --controller-name sealed-secrets \
+    --controller-namespace sealed-secrets \
+    --format yaml \
+  > "$OUT"
 
 echo "Generado: $OUT"
