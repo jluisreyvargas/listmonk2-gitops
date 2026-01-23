@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Basic guardrails (no plain Secret manifests)
+        run: |
+          if grep -R "^kind: Secret$" -n apps/; then
+            echo "ERROR: Se han encontrado manifests con kind: Secret. Usa SealedSecret." >&2
+            exit 1
+          fi
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yamllint
+          curl -sSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz \
+            | tar -xz kubeconform
+          sudo mv kubeconform /usr/local/bin/kubeconform
+
+      - name: yamllint
+        run: |
+          yamllint -d '{extends: default, rules: {line-length: {max: 140}}}' apps
+
+      - name: kubeconform
+        run: |
+          kubeconform -summary -strict -ignore-missing-schemas -kubernetes-version 1.30.0 apps

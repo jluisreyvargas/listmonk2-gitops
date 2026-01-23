@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: listmonk-stable
+  namespace: listmonk
+  labels:
+    app.kubernetes.io/name: listmonk
+    app.kubernetes.io/part-of: listmonk2
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 9000
+  selector:
+    app.kubernetes.io/name: listmonk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: listmonk-preview
+  namespace: listmonk
+  labels:
+    app.kubernetes.io/name: listmonk
+    app.kubernetes.io/part-of: listmonk2
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 9000
+  selector:
+    app.kubernetes.io/name: listmonk
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: listmonk
+  namespace: listmonk
+  labels:
+    app.kubernetes.io/name: listmonk
+    app.kubernetes.io/part-of: listmonk2
+spec:
+  replicas: 2
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: listmonk
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: listmonk
+        app.kubernetes.io/part-of: listmonk2
+    spec:
+      containers:
+        - name: listmonk
+          image: ghcr.io/REPLACE_ME/listmonk2:sha-REPLACE_ME
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+              name: http
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: listmonk
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: listmonk-secrets
+                  key: db_user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: listmonk-secrets
+                  key: db_password
+            - name: LISTMONK_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: listmonk-secrets
+                  key: admin_user
+            - name: LISTMONK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: listmonk-secrets
+                  key: admin_password
+            - name: LISTMONK_APP_ROOT_URL
+              value: "http://listmonk.local/"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+  strategy:
+    blueGreen:
+      activeService: listmonk-stable
+      previewService: listmonk-preview
+      autoPromotionEnabled: false
+      previewReplicaCount: 1
+      scaleDownDelaySeconds: 30
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: listmonk
+  namespace: listmonk
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: listmonk.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: listmonk-stable
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: listmonk-preview
+  namespace: listmonk
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: preview.listmonk.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: listmonk-preview
+                port:
+                  number: 80
