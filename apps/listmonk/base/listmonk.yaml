@@ -69,10 +69,13 @@ spec:
             - |
               set -eu
 
+              # Config en /tmp (rootfs read-only)
               cat > /tmp/config.toml <<EOF
               [app]
               address = "0.0.0.0:9000"
+              # En listmonk v6 suele ser root_url, y en algunas builds también se lee como url.
               root_url = "${LISTMONK_APP_ROOT_URL}"
+              url = "${LISTMONK_APP_ROOT_URL}"
 
               [db]
               host = "${DB_HOST}"
@@ -117,20 +120,19 @@ spec:
                 secretKeyRef:
                   name: listmonk-secrets
                   key: admin_password
+            # Importante: SIN slash final
             - name: LISTMONK_APP_ROOT_URL
-              value: "http://listmonk.local/"
+              value: "http://listmonk.local"
           readinessProbe:
             tcpSocket:
               port: 9000
             initialDelaySeconds: 10
             periodSeconds: 10
-
           livenessProbe:
             tcpSocket:
               port: 9000
             initialDelaySeconds: 30
             periodSeconds: 20
-
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
