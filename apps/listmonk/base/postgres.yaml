@@ -6,6 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: postgres
     app.kubernetes.io/part-of: listmonk2
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   ports:
     - name: postgres
@@ -22,6 +24,8 @@ metadata:
   labels:
     app.kubernetes.io/name: postgres
     app.kubernetes.io/part-of: listmonk2
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   serviceName: postgres
   replicas: 1
