@@ -1,0 +1,8 @@
+extends: default
+
+rules:
+  line-length:
+    max: 140
+
+ignore: |
+  apps/listmonk/overlays/local/sealedsecrets/*.yaml
