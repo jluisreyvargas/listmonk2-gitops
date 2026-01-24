@@ -4,9 +4,9 @@ metadata:
   name: listmonk-db-migrate
   namespace: listmonk
   annotations:
-    # Hook de Argo CD: se ejecuta antes de sincronizar el resto
     argocd.argoproj.io/hook: PreSync
-    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    # CLAVE: permite re-crear el hook en cada sync (si cambió algo)
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
   labels:
     app.kubernetes.io/name: listmonk
     app.kubernetes.io/part-of: listmonk2
@@ -56,13 +56,38 @@ spec:
                   key: admin_password
             - name: LISTMONK_APP_ROOT_URL
               value: "http://listmonk.local/"
-          command: ["sh", "-c"]
+          command: ["sh","-ec"]
           args:
-            # 1) intenta install (necesita 'yes' por confirmación) y, si falla, ejecuta upgrade.
-            - "yes | ./listmonk --install --config /tmp/config.toml || ./listmonk --upgrade --config /tmp/config.toml"
+            - |
+              CONFIG=/tmp/config.toml
+
+              # Encuentra el binario (por si está en PATH o en ./listmonk)
+              if command -v listmonk >/dev/null 2>&1; then
+                BIN=listmonk
+              else
+                BIN=./listmonk
+              fi
+
+              cat > "$CONFIG" <<EOF
+              [app]
+              address = "0.0.0.0:9000"
+
+              [db]
+              host = "${DB_HOST}"
+              port = ${DB_PORT}
+              user = "${DB_USER}"
+              password = "${DB_PASSWORD}"
+              database = "${DB_NAME}"
+              ssl_mode = "disable"
+              max_open = 25
+              max_idle = 25
+              max_lifetime = "300s"
+              params = ""
+              EOF
+
+              # Instala si no existe, si ya existe hace upgrade
+              yes | "$BIN" --install --config "$CONFIG" || "$BIN" --upgrade --config "$CONFIG"
           securityContext:
-            runAsUser: 10001
-            runAsGroup: 10001
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
