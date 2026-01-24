@@ -50,6 +50,10 @@ spec:
         app.kubernetes.io/name: listmonk
         app.kubernetes.io/part-of: listmonk2
     spec:
+      securityContext:
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
       containers:
         - name: listmonk
           image: ghcr.io/jluisreyvargas/listmonk2:sha-fed5816e907e24bc55003084075d2ab6eda6caea
