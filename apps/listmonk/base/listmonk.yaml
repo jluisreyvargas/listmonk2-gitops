@@ -68,14 +68,14 @@ spec:
           args:
             - |
               set -eu
-
+              ROOT="${LISTMONK_APP_ROOT_URL%/}/"
               # Config en /tmp (rootfs read-only)
               cat > /tmp/config.toml <<EOF
               [app]
               address = "0.0.0.0:9000"
               # En listmonk v6 suele ser root_url, y en algunas builds también se lee como url.
-              root_url = "${LISTMONK_APP_ROOT_URL}"
-              url = "${LISTMONK_APP_ROOT_URL}"
+              root_url = "${ROOT}"
+              url = "${ROOT}"
 
               [db]
               host = "${DB_HOST}"
