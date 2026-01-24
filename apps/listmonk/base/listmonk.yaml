@@ -122,7 +122,7 @@ spec:
                   key: admin_password
             # Importante: SIN slash final
             - name: LISTMONK_APP_ROOT_URL
-              value: "http://listmonk.local"
+              value: "http://listmonk.local/"
           readinessProbe:
             tcpSocket:
               port: 9000
