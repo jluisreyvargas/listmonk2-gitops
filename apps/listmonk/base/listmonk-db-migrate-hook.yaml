@@ -21,7 +21,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: migrate
-          image: ghcr.io/REPLACE_ME/listmonk2:sha-REPLACE_ME
+          image: ghcr.io/jluisreyvargas/listmonk2:sha-fed5816e907e24bc55003084075d2ab6eda6caea
           imagePullPolicy: IfNotPresent
           env:
             - name: DB_HOST

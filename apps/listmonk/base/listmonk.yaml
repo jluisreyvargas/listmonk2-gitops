@@ -1,4 +1,4 @@
-apiVersion: v1
+jluisreyvargasapiVersion: v1
 kind: Service
 metadata:
   name: listmonk-stable
@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
         - name: listmonk
-          image: ghcr.io/REPLACE_ME/listmonk2:sha-REPLACE_ME
+          image: ghcr.io/jluisreyvargas/listmonk2:sha-fed5816e907e24bc55003084075d2ab6eda6caea
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9000
