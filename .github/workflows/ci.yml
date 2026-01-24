@@ -31,7 +31,11 @@ jobs:
 
       - name: yamllint
         run: |
-          yamllint -d '{extends: default, rules: {line-length: {max: 140}}}' apps
+          yamllint -d '{
+            extends: default,
+            ignore: "apps/listmonk/overlays/local/sealedsecrets/*.yaml",
+            rules: { line-length: { max: 140 } }
+          }' apps
 
       - name: kubeconform
         run: |
