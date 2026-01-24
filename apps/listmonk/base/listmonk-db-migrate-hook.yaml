@@ -59,18 +59,13 @@ spec:
           command: ["sh", "-ec"]
           args:
             - |
-              CONFIG=/tmp/config.toml
+              set -eu
 
-              # Encuentra el binario (por si está en PATH o en ./listmonk)
-              if command -v listmonk >/dev/null 2>&1; then
-                BIN=listmonk
-              else
-                BIN=./listmonk
-              fi
-
-              cat > "$CONFIG" <<EOF
+              # genera el config en /tmp (rootfs es read-only, /tmp sí suele ser writable)
+              cat > /tmp/config.toml <<'TOML'
               [app]
               address = "0.0.0.0:9000"
+              root_url = "${LISTMONK_APP_ROOT_URL}"
 
               [db]
               host = "${DB_HOST}"
@@ -82,12 +77,8 @@ spec:
               max_open = 25
               max_idle = 25
               max_lifetime = "300s"
-              params = ""
-              EOF
+              TOML
 
-              # Instala si no existe, si ya existe hace upgrade
-              yes | "$BIN" --install --config "$CONFIG" || "$BIN" --upgrade --config "$CONFIG"
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
+              # instala/actualiza DB
+              ./listmonk --config /tmp/config.toml --install --yes --idempotent --upgrade \
+              || ./listmonk --config /tmp/config.toml --upgrade --yes --idempotent

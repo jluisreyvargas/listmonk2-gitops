@@ -58,6 +58,29 @@ spec:
         - name: listmonk
           image: ghcr.io/jluisreyvargas/listmonk2:sha-fed5816e907e24bc55003084075d2ab6eda6caea
           imagePullPolicy: IfNotPresent
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -eu
+
+              cat > /tmp/config.toml <<EOF
+              [app]
+              address = "0.0.0.0:9000"
+              root_url = "${LISTMONK_APP_ROOT_URL}"
+
+              [db]
+              host = "${DB_HOST}"
+              port = ${DB_PORT}
+              user = "${DB_USER}"
+              password = "${DB_PASSWORD}"
+              database = "${DB_NAME}"
+              ssl_mode = "disable"
+              max_open = 25
+              max_idle = 25
+              max_lifetime = "300s"
+              EOF
+
+              exec ./listmonk --config /tmp/config.toml
           ports:
             - containerPort: 9000
               name: http
