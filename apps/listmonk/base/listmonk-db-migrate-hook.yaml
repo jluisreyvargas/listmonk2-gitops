@@ -61,7 +61,8 @@ spec:
             # 1) intenta install (necesita 'yes' por confirmación) y, si falla, ejecuta upgrade.
             - "yes | ./listmonk --install --config /tmp/config.toml || ./listmonk --upgrade --config /tmp/config.toml"
           securityContext:
-            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
