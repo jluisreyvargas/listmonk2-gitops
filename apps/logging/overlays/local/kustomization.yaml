@@ -3,5 +3,4 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - promtail-secret-patch.yaml
-#  - loki-gateway-svc.yaml
+  - sealedsecrets/sealedsecret-promtail.yaml
