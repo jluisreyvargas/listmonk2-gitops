@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../base
   - sealedsecrets/sealedsecret-listmonk.yaml
+  - mailpit
 
 # Cambia estos valores para apuntar a tu GHCR
 images:
