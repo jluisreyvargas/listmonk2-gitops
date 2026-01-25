@@ -16,4 +16,4 @@ spec:
     app.kubernetes.io/instance: loki
     app.kubernetes.io/name: loki
   sessionAffinity: None
-  type: ClusterIP
+
