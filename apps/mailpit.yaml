@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://jluisreyvargas/repo-infra.git
+    repoURL: https://github.com/jluisreyvargas/listmonk2-infra.git
     targetRevision: main
     path: mailpit/base
   destination:
