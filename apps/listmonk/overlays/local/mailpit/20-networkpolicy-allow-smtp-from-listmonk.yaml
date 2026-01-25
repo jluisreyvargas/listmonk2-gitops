@@ -16,7 +16,7 @@ spec:
               kubernetes.io/metadata.name: listmonk
           podSelector:
             matchLabels:
-              app: listmonk
+              app.kubernetes.io/name: listmonk
       ports:
         - protocol: TCP
           port: 1025
