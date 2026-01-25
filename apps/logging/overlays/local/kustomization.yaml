@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - ../../base
   - sealedsecrets/sealedsecret-promtail.yaml
+  - promtail-rbac.yaml
