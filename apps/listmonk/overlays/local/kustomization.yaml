@@ -2,15 +2,15 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base
-- sealedsecrets/sealedsecret-listmonk.yaml
-- mailpit
+  - ../../base
+  - sealedsecrets/sealedsecret-listmonk.yaml
+  - mailpit
 
 # Cambia estos valores para apuntar a tu GHCR
 images:
-- name: ghcr.io/REPLACE_ME/listmonk2-app
-  newName: ghcr.io/jluisreyvargas/listmonk2-app
-  newTag: sha-fed5816e907e24bc55003084075d2ab6eda6caea
-- name: ghcr.io/jluisreyvargas/listmonk2
-  newName: ghcr.io/jluisreyvargas/listmonk2
-  newTag: sha-aeec93a13f7f34159bf30980f28a11b9fd2eea79
+  - name: ghcr.io/REPLACE_ME/listmonk2-app
+    newName: ghcr.io/jluisreyvargas/listmonk2-app
+    newTag: sha-fed5816e907e24bc55003084075d2ab6eda6caea
+  - name: ghcr.io/jluisreyvargas/listmonk2
+    newName: ghcr.io/jluisreyvargas/listmonk2
+    newTag: sha-aeec93a13f7f34159bf30980f28a11b9fd2eea79
