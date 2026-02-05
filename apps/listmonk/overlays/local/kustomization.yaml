@@ -13,4 +13,4 @@ images:
   newTag: sha-fed5816e907e24bc55003084075d2ab6eda6caea
 - name: ghcr.io/jluisreyvargas/listmonk2
   newName: ghcr.io/jluisreyvargas/listmonk2
-  newTag: sha-3fb0ce6851dc391deac613acec4355c4d8673257
+  newTag: sha-5cd554663bd3dced1695a676c480cc0ea6ae0ef5
