@@ -53,4 +53,3 @@ Si quedaron restos en este repo (promtail/loki‑gateway): mover a `archive/` o 
 - `promtail-secret-patch.yaml`
 
 ---
-Generado: 2026-02-05T16:01:07.344201Z
